@@ -1,0 +1,34 @@
+function [  ] = multigen_speed_analysis( list_genes, number,generation)
+
+% Import the translation time for each codon
+importModelCodons();
+
+%Plotting the change in speed through 100 generations
+list_codon_times = zeros(length(list_genes),length(list_genes(1).Codons));
+list_ratios = zeros(1,length(list_genes));
+
+for i=1:length(list_genes)
+    list_codon_times(i,:) = speed_analysis(list_genes(i),number);
+    disp(mean(list_codon_times(i,1:ceil(length(list_codon_times(i,:))/4))) / mean(list_codon_times(i,ceil(length(list_codon_times(i,:))/4):end)));
+    list_ratios(i) = mean(list_codon_times(i,1:ceil(length(list_codon_times(i,:))/4))) / mean(list_codon_times(i,ceil(length(list_codon_times(i,:))/4):end));
+end
+
+list_mean_times = mean(list_codon_times(:,:));
+
+mean_beginning_time = mean(list_mean_times(1:(length(list_mean_times)/4)));
+mean_end_time = mean(list_mean_times(3*(length(list_mean_times)/4):end));
+mean_middle_time = mean(list_mean_times(2*(length(list_mean_times)/4):3*(length(list_mean_times)/4)));
+mean_not_beginning_time = mean(list_mean_times((length(list_mean_times)/4):end))
+beginning_end_ratio = mean_beginning_time/mean_end_time;
+beginning_middle_ratio = mean_beginning_time/mean_end_time;
+beginning_rest_ratio = mean_beginning_time/mean_not_beginning_time;
+
+%save ratios to a f
+fileID = fopen('ratios.txt','a');
+contents = strcat('At ',num2str(generation),', ', 'Gene ',num2str(number), ': Beginning: ', num2str(mean_beginning_time), ' Middle: ', num2str(mean_middle_time), ' End: ', num2str(mean_end_time), ' Beginning/End Ratio: ', num2str(beginning_rest_ratio));
+fprintf(fileID,contents);
+fclose(fileID);
+
+plot_ratios(list_ratios,number,generation)
+plot_speed(list_mean_times,strcat('Average translation time vs position at generation ',num2str(generation),'for previous 100 generations. Total time: ',num2str(sum(list_mean_times))),number,generation)
+end

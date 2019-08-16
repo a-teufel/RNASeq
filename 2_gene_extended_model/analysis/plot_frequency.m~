@@ -1,0 +1,12 @@
+function [  ] = plot_frequency( actual, random, name, number)
+
+%plot(1:length(struct.a(:,1)),struct.a(:,1),1:length(struct.a(:,1)),struct.a(:,2));% Plots the actual and random distribution
+plot()
+legend('Actual distribution', 'Random distribution');
+set(gca,'xtick',1:(length(struct.a(:,1))/30):length(struct.a(:,1)),'xticklabel',1:ceil((length(struct.a(:,1))/30)):length(struct.a(:,1)));
+xlabel('Position on Sequence')
+ylabel('Frequency of Most Expressed Codon')
+title('Frequency of Most Expressed Codon vs Position on Sequence')
+savename = strcat('Plot/Frequency/gene',number,'/freq_',name,date,'.fig');
+savefig(gcf,savename)
+end
